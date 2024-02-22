@@ -8,28 +8,46 @@ const App = () => {
     [null, null, null],
     [null, null, null],
   ];
+  let counterValue = 2
+  const winningCombos = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+    [0, 4, 8], [2, 4, 6] // Diagonals
+];
+
   const [array, setArray] = useState(initialArray);
   const [rowIndex, setRowIndex] = useState(null);
   const [isXturn, setIsXturn] = useState(true);
-  const [gameOver, setGameOver] = useState(false);
+  const [isgameOver, setIsGameOver] = useState(false);
   const [player1Undo, setPlayer1Undo] = useState(3);
   const [player2Undo, setPlayer2Undo] = useState(3);
   const [showUndo, setShowUndo] = useState(false);
   const [isUndo, setIsUndo] = useState(false);
-  const [counter, setCounter] = useState(5);
+  const [counter, setCounter] = useState(counterValue);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [winnerName , setWinnerName] = useState("")
   const intervalRef = useRef(null);
+
+  const checkWinner =(board)=>{
+   for (let combo of winningCombos){
+    const [a,b,c] = combo
+    if(board[a] && board[a]==board[b] && board[a]==board[c]){
+      return board[a]
+    }
+   }
+   return null
+  }
 
   const handleUndo = () => {
     console.log(array[rowIndex.row][rowIndex.col]);
     setIsUndo(true);
     setShowUndo(false);
     clearInterval(intervalRef.current);
-    setCounter(5);
+    setCounter(counterValue);
   };
 
   useEffect(() => {
-    console.log("ruming use effect");
+    console.log("running use effect");
     if (counter <= 0) {
       console.log("inside 0");
       setIsXturn(!isXturn);
@@ -38,7 +56,7 @@ const App = () => {
       setShowUndo(false);
       clearInterval(intervalRef.current);
       intervalRef.current = null;
-      setCounter(5);
+      setCounter(counterValue);
     }
     if (
       (isXturn && isUndo && player1Undo <= 3 && player1Undo > 0) ||
@@ -74,32 +92,62 @@ const App = () => {
   };
 
   const handleClick = (rowIndx, colIndex) => {
-    setShowUndo(true);
-
-    if (array[rowIndx][colIndex] == null) {
-      console.log("2nd");
-      setArray((prevArray) => {
-        const newArray = [...prevArray];
-        newArray[rowIndx][colIndex] = isXturn ? "X" : "O";
-
-        return newArray;
-      });
-      if ((isXturn && player1Undo <= 0) || (!isXturn && player2Undo <= 0)) {
-        setIsUndo(false);
-        setShowUndo(false);
-        setIsXturn(!isXturn);
+    if (!isgameOver) {
+      setShowUndo(true);
+  
+      if (array[rowIndx][colIndex] == null) {
+        console.log("2nd");
+        setArray((prevArray) => {
+          const newArray = [...prevArray];
+          newArray[rowIndx][colIndex] = isXturn ? "X" : "O";
+          let winner =checkWinner(newArray.flat())
+          console.log("Running Second")
+          if(winner){
+            setIsGameOver(true)
+            clearInterval(intervalRef.current);
+            setIsPlaying(false)
+            setShowUndo(false);
+            setWinnerName(winner)
+            
+          }
+          else if (newArray.flat().every(square => square)) {
+            // If all squares are filled and no winner, it's a draw
+            setIsGameOver(true);
+            clearInterval(intervalRef.current);
+            setIsPlaying(false);
+            console.log({isPlaying} , "inside setArray")
+            setShowUndo(false);
+            setWinnerName(""); // No winner in a draw
+            
+          }
+        
+          return newArray;
+        });
+       
+        if ((isXturn && player1Undo <= 0) || (!isXturn && player2Undo <= 0)) {
+          setIsUndo(false);
+          setShowUndo(false);
+          setIsXturn(!isXturn);
+        }
+        setIsPlaying(
+          (isXturn && player1Undo > 0) || (!isXturn && player2Undo > 0)
+        );
+    
+  
+        if ((isXturn && player1Undo > 0) || (!isXturn && player2Undo > 0)) {
+          startTimer();
+        }
+      } else {
+        console.log("full");
       }
-      setIsPlaying(
-        (isXturn && player1Undo > 0) || (!isXturn && player2Undo > 0)
-      );
-
-      if ((isXturn && player1Undo > 0) || (!isXturn && player2Undo > 0)) {
-        startTimer();
-      }
-    } else {
-      console.log("full");
+    };
     }
-  };
+
+    const handlePlayAgian=()=>{
+      setArray(initialArray)
+      setIsGameOver(false)
+      setWinnerName("")
+    }
 
   return (
     <div className="mainContainer">
@@ -117,7 +165,7 @@ const App = () => {
                 key={`${index}-${index1}`}
                 item={el}
                 onClick={
-                  isPlaying
+                  (isPlaying && !isgameOver)
                     ? null
                     : () => {
                         handleClick(index, index1);
@@ -148,6 +196,8 @@ const App = () => {
           </span>
         </>
       )}
+      {isgameOver && <><h1>{winnerName?`player ${winnerName} Wins`:"Its a Darw"}</h1></>}
+      {isgameOver&& <><button onClick={handlePlayAgian}>Play Again</button></>}
     </div>
   );
 };
