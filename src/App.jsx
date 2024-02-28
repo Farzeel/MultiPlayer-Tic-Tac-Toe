@@ -27,13 +27,55 @@ const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [winnerName , setWinnerName] = useState("")
   const intervalRef = useRef(null);
+  const winningLineref = useRef(null)
+
+
 
   const checkWinner =(board)=>{
+    let line;
    for (let combo of winningCombos){
     const [a,b,c] = combo
     if(board[a] && board[a]==board[b] && board[a]==board[c]){
+      line=combo
+   
+      if(line[0]==0 && line[1]==1 && line[2]==2){
+       winningLineref.current.classList.add("horizental1")
+        winningLineref.current.style.backgroundColor=board[a]=="X"?"green":"purple"
+
+       
+      }else if(line[0]==3 && line[1]==4 && line[2]==5){
+        winningLineref.current.classList.add("horizental2")
+        winningLineref.current.style.backgroundColor=board[a]=="X"?"green":"purple"
+      }
+      else if(line[0]==6 && line[1]==7 && line[2]==8){
+        winningLineref.current.classList.add("horizental3")
+        winningLineref.current.style.backgroundColor=board[a]=="X"?"green":"purple"
+      }
+      else if(line[0]==0 && line[1]==4 && line[2]==8){
+        winningLineref.current.classList.add("horizental2")
+        winningLineref.current.style.transform = "rotate(45deg)"
+        winningLineref.current.style.backgroundColor=board[a]=="X"?"green":"purple"
+      }
+      else if(line[0]==2 && line[1]==4 && line[2]==6){
+        winningLineref.current.classList.add("horizental2")
+        winningLineref.current.style.transform = "rotate(135deg)"
+        winningLineref.current.style.backgroundColor=board[a]=="X"?"green":"purple"
+      }
+      else if(line[0]==0 && line[1]==3 && line[2]==6){
+        winningLineref.current.classList.add("vertical1")
+        winningLineref.current.style.backgroundColor=board[a]=="X"?"green":"purple"
+      }
+      else if(line[0]==1 && line[1]==4 && line[2]==7){
+        winningLineref.current.classList.add("vertical2")
+        winningLineref.current.style.backgroundColor=board[a]=="X"?"green":"purple"
+      }
+      else if(line[0]==2 && line[1]==5 && line[2]==8){
+        winningLineref.current.classList.add("vertical3")
+        winningLineref.current.style.backgroundColor=board[a]=="X"?"green":"purple"
+      }
       return board[a]
     }
+   
    }
    return null
   }
@@ -177,6 +219,7 @@ const App = () => {
           })
         )}
       </div>
+      <div ref={winningLineref} className="winningLine"></div>
 
       {showUndo && (
         <>

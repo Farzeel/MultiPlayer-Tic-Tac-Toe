@@ -23,6 +23,7 @@
     column-gap: 10px;
 }
 .square{
+    position: relative;
     width: 70px;
     height: 70px;
     background-color: rgb(154, 145, 145);
@@ -31,6 +32,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  
  
 }
 .disabled {
@@ -56,3 +58,71 @@ cursor: pointer;
 color: white;
 border: 1px solid white;
 }
+.winningLine {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+   
+
+}
+.horizental1{
+ top: 32%;
+ width: 200px;
+ height: 3px;
+ transition: width 1.5s ease-in-out;
+}
+.horizental2{
+ top: 50%;
+ width: 200px;
+ height: 3px;
+ transition: width 1.5s ease-in-out;
+}
+.horizental3{
+ top: 68%;
+ width: 200px;
+ height: 3px;
+ transition: width 1.5s ease-in-out;
+}
+.vertical1{
+    top: 28%;
+    left: 44%;
+    height: 200px;
+    width: 3px;
+    transition: height 1.5s ease-in-out;
+}
+.vertical2{
+    top: 28%;
+    left: 50%;
+    height: 200px;
+    width: 3px;
+    transition: height 1.5s ease-in-out;
+}
+.vertical3{
+    top: 28%;
+    left: 56%;
+    height: 200px;
+    width: 3px;
+    transition: height 1.5s ease-in-out;
+}
+
+@media screen and (max-width: 600px) {
+    .horizental1{
+        top: 37.1%;
+       }
+    .horizental3{
+   top: 64%;
+  }
+  .vertical2{
+    top: 34%;
+  }
+  .vertical1{
+    top: 34%;
+    left: 23%;
+   
+  }
+  .vertical3{
+    top: 34%;
+    left: 76%;
+  }
+  }
+
